@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String     @id @default(uuid())
+  name              String
+  email             String     @unique
+
+  // Password auth
+  password           String
+  passwordVerified   Boolean    @default(false)
+
+  // Google OAuth
+  googleId           String?    @unique
+  emailVerified      Boolean    @default(false)
+
+  role               String     @default("user")
+  createdAt          DateTime   @default(now())
+
+  // One-time password setup token (for admin-created clients)
+  passwordSetupToken String?    @unique
+  passwordSetupExpiry DateTime?
+
+  otps               EmailOtp[]
+  logins             UserLogin[]
+}
+
+model UserLogin {
+  id        String   @id @default(uuid())
+  userId    String
+  email     String
+  action    String   // 'login' | 'logout'
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+}
+
+model EmailOtp {
+  id         String   @id @default(uuid())
+  userId     String
+  email      String
+  otpHash    String
+  expiresAt  DateTime
+  purpose    String // 'email_verify' | 'password_verify'
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, purpose])
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  status    String
+  owner     String
+  createdAt DateTime @default(now())
+}
