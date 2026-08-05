@@ -14,7 +14,12 @@ const passport = require("./config/passport");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: true, // allow all origins (or set VITE_FRONTEND_URL for production)
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(
   session({
@@ -37,9 +42,14 @@ app.get("/", (req, res) => {
   res.send("LaunchBoard API Running");
 });
 
-// Port
+// Port (only start listening when run directly, not when imported by Vercel serverless)
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export the Express app for Vercel serverless deployment
+module.exports = app;
