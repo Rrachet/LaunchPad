@@ -3,7 +3,7 @@
 ## Progress
 - [x] Analyze project & deployment state
 - [x] Verify backend is live & working
-- [ ] Commit pending changes & push to GitHub
+- [x] Commit pending changes & push to GitHub
 - [ ] Redeploy frontend (Vercel --prod)
 - [ ] Verify live site loads & login works end-to-end
 - [ ] Confirm final URLs
