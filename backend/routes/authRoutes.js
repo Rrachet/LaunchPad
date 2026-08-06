@@ -5,6 +5,8 @@ const passport = require("../config/passport");
 
 const {
   loginUser,
+  loginOtpStart,
+  loginOtpVerify,
   getMe,
   registerUser,
   logoutUser,
@@ -28,14 +30,22 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    const email = req.user?.email;
+    const user = req.user;
+    const email = user?.email;
+
+    // Google already verified the email — issue a real auth token.
+    const token = require("jsonwebtoken").sign(
+      { id: user?.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     const frontendSuccessUrl =
       process.env.FRONTEND_GOOGLE_SUCCESS_URL ||
       "http://localhost:5173/google-success";
 
     const redirectUrl = email
-      ? `${frontendSuccessUrl}?email=${encodeURIComponent(email)}`
+      ? `${frontendSuccessUrl}?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}&role=${user?.role || "user"}`
       : frontendSuccessUrl;
 
     return res.redirect(302, redirectUrl);
@@ -49,6 +59,8 @@ router.post("/password-otp/verify", passwordOtpVerify);
 router.post("/password/complete", passwordComplete);
 router.post("/set-password", setPassword);
 router.post("/login", loginUser);
+router.post("/login-otp/start", loginOtpStart);
+router.post("/login-otp/verify", loginOtpVerify);
 router.post("/logout", authMiddleware, logoutUser);
 
 module.exports = router;

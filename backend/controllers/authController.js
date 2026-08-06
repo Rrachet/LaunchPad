@@ -106,7 +106,145 @@ const registerUser = async (req, res) => {
   }
 };
 
-// LOGIN USER (only if both emailVerified and passwordVerified)
+// LOGIN STEP 1 — Verify credentials, send OTP to email, return a pending token.
+// Expects: { email, password }
+const loginOtpStart = async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "email and password are required" });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.emailVerified || !user.passwordVerified) {
+      return res
+        .status(403)
+        .json({ message: "Account not verified. Please complete signup verification." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // Credentials are valid — now send an OTP to the user's email for 2FA.
+    const otp = generateNumericOtp(6);
+    const otpHash = await hashOtp(otp);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.emailOtp.create({
+      data: {
+        userId: user.id,
+        email,
+        otpHash,
+        expiresAt,
+        purpose: "login_verify",
+      },
+    });
+
+    const subject = "Your LaunchPad login code";
+    try {
+      await sendOtpEmail({
+        to: email,
+        subject,
+        text: `Your login OTP is: ${otp}. It expires in 10 minutes.`,
+        html: `<p>Your login OTP is: <b>${otp}</b>. It expires in 10 minutes.</p>`,
+      });
+    } catch (e) {
+      if (!OTP_DEV_MODE) {
+        return res.status(500).json({ error: "Failed to send OTP email" });
+      }
+    }
+
+    // A short-lived token that proves credentials were verified (NOT the auth token).
+    const pendingToken = jwt.sign(
+      { id: user.id, email, purpose: "login_otp" },
+      process.env.JWT_SECRET,
+      { expiresIn: "10m" }
+    );
+
+    return res.status(200).json({
+      message: "OTP sent to your email",
+      pendingToken,
+      ...(OTP_DEV_MODE ? { devOtp: otp } : {}),
+    });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+};
+
+// LOGIN STEP 2 — Verify OTP, issue the real JWT.
+// Expects: { pendingToken, otp }
+const loginOtpVerify = async (req, res) => {
+  try {
+    const { pendingToken, otp } = req.body || {};
+
+    if (!pendingToken || !otp) {
+      return res.status(400).json({ message: "pendingToken and otp are required" });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(pendingToken, process.env.JWT_SECRET);
+    } catch (e) {
+      return res.status(400).json({ message: "Session expired. Please log in again." });
+    }
+
+    if (payload.purpose !== "login_otp") {
+      return res.status(400).json({ message: "Invalid session token" });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: payload.id } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const latest = await prisma.emailOtp.findFirst({
+      where: { userId: user.id, purpose: "login_verify" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!latest) return res.status(400).json({ message: "No OTP found. Please request a new one." });
+    if (latest.expiresAt < new Date()) {
+      return res.status(400).json({ message: "OTP expired. Please request a new one." });
+    }
+
+    const ok = await verifyOtp({ otp, otpHash: latest.otpHash });
+    if (!ok) return res.status(400).json({ message: "Invalid OTP" });
+
+    // OTP verified — issue the real auth token.
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    try {
+      await prisma.userLogin.create({
+        data: { userId: user.id, email: user.email, action: "login" },
+      });
+    } catch (e) {
+      console.error("[auth] Failed to record login activity:", e.message);
+    }
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      role: user.role,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+};
+
+// LEGACY LOGIN USER (kept for backward compatibility; direct JWT, no OTP)
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -495,6 +633,8 @@ const setPassword = async (req, res) => {
 
 module.exports = {
   loginUser,
+  loginOtpStart,
+  loginOtpVerify,
   getMe,
   registerUser,
   logoutUser,

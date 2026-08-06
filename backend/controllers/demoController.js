@@ -48,9 +48,9 @@ const bookDemo = async (req, res) => {
     await transport.sendMail({
       from: process.env.OTP_FROM_EMAIL || process.env.SMTP_USER,
       to: HOST_EMAIL,
-      subject: "New LaunchPad Demo Booking",
+subject: "New LaunchPad Demo Booked — Google Meet Confirmed",
       text: [
-        "A new demo has been requested:",
+        "A new demo has been booked via Google Meet:",
         "",
         `Name: ${name || "—"}`,
         `Email: ${email}`,
@@ -59,14 +59,15 @@ const bookDemo = async (req, res) => {
       ].join("\n"),
       html: `
         <div style="font-family:sans-serif;background:#0b0f19;color:#e6edf7;padding:24px;border-radius:12px">
-          <h2 style="margin-top:0">New LaunchPad Demo Booking</h2>
-          <p style="color:#94a3b8">A potential customer would like to see a demo.</p>
+<h2 style="margin-top:0">🎥 New LaunchPad Demo — Google Meet Booked</h2>
+          <p style="color:#94a3b8">A potential customer filled the demo form and a Google Meet has been booked.</p>
           <table style="border-collapse:collapse;margin-top:12px">
             <tr><td style="padding:6px 12px;color:#94a3b8">Name</td><td style="padding:6px 12px"><b>${name || "—"}</b></td></tr>
             <tr><td style="padding:6px 12px;color:#94a3b8">Email</td><td style="padding:6px 12px"><b>${email}</b></td></tr>
             <tr><td style="padding:6px 12px;color:#94a3b8">Date</td><td style="padding:6px 12px"><b>${date}</b></td></tr>
             <tr><td style="padding:6px 12px;color:#94a3b8">Time</td><td style="padding:6px 12px"><b>${time}</b></td></tr>
           </table>
+          <p style="color:#94a3b8;margin-top:16px">✅ Google Meet has been scheduled. Please add this slot to your calendar and be ready to host.</p>
         </div>
       `,
     });
