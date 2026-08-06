@@ -1,24 +1,18 @@
-# LaunchBoard — Product-Level Auth Upgrade
+# Landing Page Fixes - TODO
 
-## Goals
-1. ✅ Add OTP step for email/password login (same-page 2-step flow).
-2. ✅ Fix Google OAuth to issue a real JWT and land user in the dashboard.
-3. ✅ Ensure demo-booking email to host confirms detail + Google Meet booked.
-4. ✅ Set up SMTP so OTP + demo emails actually send.
+## Task
+Fix the "See LaunchPad in action" form section stretching outside the screen, and fix mobile header congestion.
 
-## Backend
-- [x] `authController.js`: add `loginOtpStart` (verify creds → send OTP → return temp token) and `loginOtpVerify` (verify OTP → return real JWT).
-- [x] `authRoutes.js`: add `/login-otp/start` and `/login-otp/verify` routes.
-- [x] Google callback: issue real JWT and redirect with token to `/google-success`.
-- [x] `demoController.js`: confirm Google Meet booked in the host email subject + body.
-
-## Frontend
-- [x] `Login.jsx`: 2-step same-page flow (email+password → OTP → logged in).
-- [x] `GoogleSuccess.jsx`: capture token, store, redirect to dashboard/admin.
-- [x] Add "Continue with Google" button on Login page.
-
-## Deployment / Env
-- [ ] Configure Google OAuth credentials (Google Cloud Console) in Render env.
-- [ ] Configure SMTP credentials (Gmail App Password) in Render env.
-- [x] Build & verify frontend + backend.
-- [ ] Commit & push to GitHub (triggers Render deploy).
+## Steps
+- [x] Remove the global `* { max-width: 100% }` rule from `.home-page` (keep `box-sizing`)
+- [x] Add `overflow: hidden` to `.demo-card`
+- [x] Change `.demo-form` to `repeat(2, minmax(0, 1fr))`
+- [x] Change `.time-grid` to `repeat(6, minmax(0, 1fr))` + `min-width: 0; width: 100%`
+- [x] Add `min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis` to `.time-chip`
+- [x] Add `flex-wrap: nowrap; max-width: 100%` to `.day-chips`
+- [x] Add `flex: 1; min-width: 0` to `.demo-note p`
+- [x] Update mobile `.time-grid` breakpoints to use `minmax(0, 1fr)`
+- [x] Mobile header: hide `.home-login-btn` at ≤640px (login is in burger menu)
+- [x] Hide theme toggle at ≤640px (already covered by existing rule; login button hidden to declutter)
+- [x] Verify changes render correctly in browser
+- [x] Test mobile viewport widths (375px, 640px, 768px)
