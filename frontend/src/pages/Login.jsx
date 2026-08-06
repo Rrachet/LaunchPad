@@ -18,9 +18,11 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleGoogleLogin = () => {
+const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth. The callback lands on /google-success.
-    const base = import.meta.env.VITE_API_URL || "https://launchpad-backend-zeta.vercel.app";
+    // VITE_API_URL may include a trailing "/api", so strip it to get the host.
+    const raw = import.meta.env.VITE_API_URL || "https://launchpad-backend-zeta.vercel.app/api";
+    const base = raw.replace(/\/api\/?$/, "");
     window.location.href = `${base}/api/auth/google`;
   };
 
