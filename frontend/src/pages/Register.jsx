@@ -75,8 +75,8 @@ function Register() {
     setOtpLoading(true);
     try {
 await API.post("/auth/email-otp/verify", { email, otp });
-      alert("Email verified! You can now log in.");
-      navigate("/");
+alert("Email verified! You can now log in.");
+      navigate("/login");
     } catch (err) {
       setError(err?.response?.data?.message || "OTP verification failed.");
     } finally {
