@@ -1,0 +1,39 @@
+# Render Blueprint for LaunchBoard
+# Deploys the backend as a Web Service and the frontend as a Static Site
+# from the same monorepo using rootDir.
+
+services:
+  # ---- Backend (Express + Prisma) ----
+  - type: web
+    name: launchboard-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false # set manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false # set manually in Render dashboard
+      - key: SESSION_SECRET
+        sync: false # set manually in Render dashboard
+      - key: OTP_DEV_MODE
+        value: "true" # temporarily allow OTP dev to avoid SMTP dependency; set to false when SMTP configured
+
+  # ---- Frontend (Vite build -> static) ----
+  - type: static
+    name: launchboard-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        value: https://launchboard-backend.onrender.com/api

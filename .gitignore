@@ -33,3 +33,4 @@ backend/prisma/*.db
 # Vercel
 .vercel
 .env*
+!.env.example

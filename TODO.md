@@ -1,20 +1,16 @@
-# LaunchBoard - Launch & Testing Prep
+# LaunchBoard - Render Deployment Prep
 
 ## Progress
 - [x] Analyze project & deployment state
-- [x] Verify backend is live & working
-- [x] Commit pending changes & push to GitHub
-- [x] Create frontend/.env.local for local dev (VITE_API_URL=http://localhost:5000/api)
-- [x] Fix Google OAuth flow: Register.jsx reads ?email=?&stage=otp params
-- [x] Add root-level dev scripts to run backend + frontend together
-- [x] Verify backend build (prisma generate + migrate deploy)
-- [x] Run backend test scripts (check-db, verify-auth, test-admin-users)
-- [x] Verify frontend build (npm run build) + lint
-- [ ] Set FRONTEND_GOOGLE_SUCCESS_URL for production
-- [ ] Redeploy frontend (Vercel --prod)
+- [x] Confirm Render is connected to GitHub (origin = LaunchPad.git)
+- [x] Create render.yaml Blueprint (backend Web Service + frontend Static Site)
+- [x] Update frontend API base URL to point to Render backend
+- [x] Add backend serve-static for production single-service option
+- [x] Commit changes & push to GitHub so Render auto-deploys
+- [ ] Set env vars in Render dashboard (DATABASE_URL, JWT_SECRET, SESSION_SECRET, etc.)
 - [ ] Verify live site loads & login works end-to-end
 - [ ] Confirm final URLs
 
-## Deployed URLs
-- Backend: https://launchpad-backend-zeta.vercel.app
-- Frontend: https://frontend-amars-projects-020e69fd.vercel.app
+## Render Service URLs (expected)
+- Backend Web Service: https://launchboard-backend.onrender.com
+- Frontend: (assigned by Render when Blueprint creates the Static Site)
