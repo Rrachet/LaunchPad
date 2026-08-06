@@ -4,9 +4,11 @@
 - [x] Analyze project & deployment state
 - [x] Confirm Render is connected to GitHub (origin = LaunchPad.git)
 - [x] Create render.yaml Blueprint (backend Web Service + frontend Static Site)
-- [x] Update frontend API base URL to point to Render backend
-- [x] Add backend serve-static for production single-service option
-- [x] Commit changes & push to GitHub so Render auto-deploys
+- [x] Update frontend API base URL to point to Render backend (https://launchboard-backend.onrender.com/api)
+- [x] Add .env.example documenting all required env vars
+- [x] Backend build now runs Prisma migrations (prisma generate && prisma migrate deploy)
+- [x] Commit & push to GitHub (commit 44663ae on master)
+- [ ] Connect LaunchPad repo in Render -> Blueprint auto-creates both services
 - [ ] Set env vars in Render dashboard (DATABASE_URL, JWT_SECRET, SESSION_SECRET, etc.)
 - [ ] Verify live site loads & login works end-to-end
 - [ ] Confirm final URLs
