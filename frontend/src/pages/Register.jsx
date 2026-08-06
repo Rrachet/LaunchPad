@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import Icon from "../components/Icon";
 
 function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Support the Google OAuth flow: /register?email=...&stage=otp
+  const queryEmail = searchParams.get("email") || "";
+  const startStage = searchParams.get("stage") === "otp" ? "otp" : "account";
 
   // Step 1: Account details
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(queryEmail || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +24,7 @@ function Register() {
   const [otp, setOtp] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
 
-  const [stage, setStage] = useState("account"); // account | otp
+  const [stage, setStage] = useState(startStage); // account | otp
   const [devOtp, setDevOtp] = useState(null);
   const [error, setError] = useState("");
 
@@ -69,9 +74,9 @@ function Register() {
 
     setOtpLoading(true);
     try {
-      await API.post("/auth/email-otp/verify", { email, otp });
+await API.post("/auth/email-otp/verify", { email, otp });
       alert("Email verified! You can now log in.");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       setError(err?.response?.data?.message || "OTP verification failed.");
     } finally {

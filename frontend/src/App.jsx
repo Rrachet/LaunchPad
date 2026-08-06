@@ -7,7 +7,6 @@ import SetPassword from "./pages/SetPassword";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import {
-  Overview,
   Projects,
   Teams,
   Analytics,

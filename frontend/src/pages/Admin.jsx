@@ -50,9 +50,9 @@ function Admin() {
   }, []);
 
   const handleLogout = async () => {
-    try {
+try {
       await API.post("/auth/logout");
-    } catch (e) {
+    } catch {
       // ignore — still clear local session
     }
     localStorage.removeItem("token");
