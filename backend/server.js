@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const demoRoutes = require("./routes/demoRoutes");
 
 const session = require("express-session");
 const passport = require("./config/passport");
@@ -33,6 +34,7 @@ app.use(passport.session());
 
 // API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/demo", demoRoutes);
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/admin", adminRoutes);

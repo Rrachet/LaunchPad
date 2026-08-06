@@ -1,9 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "../components/Icon";
 
 // The demo meetings get scheduled with this host email on Google Calendar.
 const HOST_EMAIL = "amarnathmishra5200@gmail.com";
+
+// Apply the saved theme on first load (before React renders) to avoid a flash.
+(function () {
+  try {
+    const saved = localStorage.getItem("lp-theme");
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    const theme = saved || (prefersLight ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {
+    /* ignore */
+  }
+})();
 
 // Simple stats for the "Why LaunchPad" comparison section.
 const COMPARISON = [
@@ -40,46 +52,88 @@ const STATS = [
   { value: "1", label: "Dashboard for everything" },
 ];
 
+// Build Google Calendar dates param from a Date (YYYYMMDDTHHMM00).
+const fmtDateParam = (d) => {
+  const pad = (n) => String(n).padStart(2, "0");
+  return (
+    d.getFullYear() +
+    pad(d.getMonth() + 1) +
+    pad(d.getDate()) +
+    "T" +
+    pad(d.getHours()) +
+    pad(d.getMinutes()) +
+    "00"
+  );
+};
+
+// Generate the next N days (Mon-Sun) as quick-pick date chips starting today.
+function nextDays(count = 14) {
+  const out = [];
+  const today = new Date();
+  for (let i = 0; i < count; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    out.push(d);
+  }
+  return out;
+}
+
+// Predefined time slots in 24h format (HH:MM). AM/PM toggle changes the 12h display.
+const TIME_SLOTS_24 = [
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+];
+
+function to12h(hh24) {
+  const [h, m] = hh24.split(":").map(Number);
+  const suffix = h >= 12 ? "PM" : "AM";
+  const hh = h % 12 === 0 ? 12 : h % 12;
+  return { text: `${hh}:${String(m).padStart(2, "0")} ${suffix}`, hour: h, suffix };
+}
+
 function BookDemo() {
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [time24, setTime24] = useState("");
   const [name, setName] = useState("");
+  const [ampm, setAmpm] = useState("AM");
   const [error, setError] = useState("");
   const [link, setLink] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const days = nextDays(14);
+
+  // Convert the 12h display period selection into a 24h slot.
+  const slotTo24 = (slot24) => {
+    const { hour, suffix } = to12h(slot24);
+    if (ampm === "PM" && hour < 12) return `${hour + 12}:${slot24.slice(3)}`;
+    if (ampm === "AM" && hour === 12) return `00:${slot24.slice(3)}`;
+    return slot24;
+  };
+
+  const handleTimeSelect = (slot24) => {
+    setTime24(slotTo24(slot24));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLink("");
 
-    if (!email || !date || !time) {
-      setError("Please fill in your email, a day, and a time.");
+    if (!email || !date || !time24) {
+      setError("Please pick a day and a time.");
       return;
     }
 
     // Build a Google Calendar event link (action=TEMPLATE).
-    // The host email is added as a guest so it lands on the founder's calendar.
-    const start = new Date(`${date}T${time}`);
+    const start = new Date(`${date}T${time24}`);
     const end = new Date(start.getTime() + 30 * 60 * 1000);
-
-    const fmt = (d) => {
-      const pad = (n) => String(n).padStart(2, "0");
-      return (
-        d.getFullYear() +
-        pad(d.getMonth() + 1) +
-        pad(d.getDate()) +
-        "T" +
-        pad(d.getHours()) +
-        pad(d.getMinutes()) +
-        "00"
-      );
-    };
 
     const params = new URLSearchParams({
       action: "TEMPLATE",
       text: "LaunchPad Demo",
-      dates: `${fmt(start)}/${fmt(end)}`,
+      dates: `${fmtDateParam(start)}/${fmtDateParam(end)}`,
       details:
         "LaunchPad product demo. I'd like to see how LaunchPad can help manage projects, analytics, and team workflows.",
       location: "Google Meet",
@@ -89,6 +143,24 @@ function BookDemo() {
 
     const googleUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
     setLink(googleUrl);
+    setShowModal(true);
+
+    // Notify the host by email with the details the user entered.
+    setSending(true);
+    try {
+      const API = (await import("../services/api")).default;
+      await API.post("/demo/book", {
+        name,
+        email,
+        date,
+        time: time24,
+      });
+    } catch (err) {
+      // Email is best-effort; the calendar link still works.
+      console.error("Failed to notify host:", err);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -105,7 +177,7 @@ function BookDemo() {
 
         <div className="demo-card">
           <form onSubmit={handleSubmit} className="demo-form">
-            <div className="field">
+            <div className="field field-full">
               <label>Your name</label>
               <input
                 type="text"
@@ -114,7 +186,7 @@ function BookDemo() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div className="field">
+            <div className="field field-full">
               <label>Work email</label>
               <input
                 type="email"
@@ -124,30 +196,82 @@ function BookDemo() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="field">
+
+            {/* Easier date entry: quick-pick day chips + native date input */}
+            <div className="field field-full">
               <label>Choose a day</label>
+              <div className="day-chips">
+                {days.map((d) => {
+                  const key = d.toISOString().split("T")[0];
+                  const active = date === key;
+                  return (
+                    <button
+                      type="button"
+                      key={key}
+                      className={`day-chip${active ? " active" : ""}`}
+                      onClick={() => setDate(key)}
+                    >
+                      <span className="day-chip-title">
+                        {d.toLocaleDateString(undefined, { weekday: "short" })}
+                      </span>
+                      <span className="day-chip-date">
+                        {d.getDate()} {d.toLocaleDateString(undefined, { month: "short" })}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
               <input
                 type="date"
-                required
+                className="date-input-inline"
                 value={date}
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setDate(e.target.value)}
               />
             </div>
-            <div className="field">
+
+            {/* Time: 24h slots with an AM/PM toggle */}
+            <div className="field field-full">
               <label>Choose a time</label>
-              <input
-                type="time"
-                required
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
+              <div className="ampm-toggle">
+                <button
+                  type="button"
+                  className={ampm === "AM" ? "active" : ""}
+                  onClick={() => setAmpm("AM")}
+                >
+                  AM
+                </button>
+                <button
+                  type="button"
+                  className={ampm === "PM" ? "active" : ""}
+                  onClick={() => setAmpm("PM")}
+                >
+                  PM
+                </button>
+              </div>
+              <div className="time-grid">
+                {TIME_SLOTS_24.map((slot) => {
+                  const { text } = to12h(slot);
+                  const active = time24 === slotTo24(slot);
+                  return (
+                    <button
+                      type="button"
+                      key={slot}
+                      className={`time-chip${active ? " active" : ""}`}
+                      onClick={() => handleTimeSelect(slot)}
+                    >
+                      {text}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {error && <div className="error-box">{error}</div>}
 
-            <button type="submit" className="btn btn-primary demo-submit">
-              <Icon name="check" size={18} /> Confirm my Google Meet
+            <button type="submit" className="btn btn-primary demo-submit" disabled={sending}>
+              <Icon name="check" size={18} />{" "}
+              {sending ? "Confirming…" : "Confirm my Google Meet"}
             </button>
           </form>
 
@@ -159,32 +283,67 @@ function BookDemo() {
               at your scheduled time.
             </p>
           </div>
-
-          {link && (
-            <div className="demo-success">
-              <p>
-                <strong>You're all set!</strong> Click below to add this to your calendar (Google
-                Meet is included):
-              </p>
-              <a className="btn btn-primary" href={link} target="_blank" rel="noreferrer">
-                <Icon name="finance" size={18} /> Add to Google Calendar
-              </a>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Success popup */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">
+              <Icon name="check" size={28} />
+            </div>
+            <h3>You're all set!</h3>
+            <p>
+              Hey, you're all set — now add this to your calendar too. We've also emailed your
+              details to our team so we can join you at the scheduled time.
+            </p>
+            <div className="modal-actions">
+              <a
+                className="btn btn-primary"
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setShowModal(false)}
+              >
+                <Icon name="finance" size={18} /> Add to Google Calendar
+              </a>
+              <button className="btn btn-outline-light" onClick={() => setShowModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
 function Home() {
+  const [theme, setTheme] = useState(() =>
+    typeof document !== "undefined"
+      ? document.documentElement.getAttribute("data-theme") || "dark"
+      : "dark"
+  );
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("lp-theme", next);
+    } catch (e) {
+      /* ignore */
+    }
+  };
+
   return (
     <div className="home-page">
       {/* ===== Header ===== */}
       <header className="home-header">
         <div className="home-header-inner">
-          <Link to="/" className="home-logo">
-            <img src="/LP.png" alt="LaunchPad logo" className="home-logo-img" />
+<Link to="/" className="home-logo">
+            <img src="/LP1.png" alt="LaunchPad logo" className="home-logo-img" />
           </Link>
 
           <nav className="home-nav">
@@ -194,6 +353,9 @@ function Home() {
           </nav>
 
           <div className="home-actions">
+            <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+              <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
+            </button>
             <Link to="/register" className="btn btn-outline-light">
               Sign up
             </Link>

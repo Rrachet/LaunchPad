@@ -1981,3 +1981,296 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Demo form: quick date + time pickers ===== */
+.field-full {
+  grid-column: span 2;
+}
+
+.day-chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  scrollbar-width: thin;
+}
+
+.day-chip {
+  flex-shrink: 0;
+  min-width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.day-chip:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.day-chip.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(34, 211, 238, 0.1));
+  color: var(--text);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.day-chip-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.day-chip.active .day-chip-title {
+  color: var(--primary-light);
+}
+
+.day-chip-date {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.date-input-inline {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 11px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.date-input-inline:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.ampm-toggle {
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 4px;
+}
+
+.ampm-toggle button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 18px;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.ampm-toggle button.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: #fff;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.time-chip {
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.time-chip:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.time-chip.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(34, 211, 238, 0.1));
+  color: var(--text);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* ===== Success modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 34px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  animation: modal-pop 0.25s ease;
+}
+
+@keyframes modal-pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--success), #16a34a);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(34, 197, 94, 0.4);
+}
+
+.modal-card h3 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.modal-card p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-actions .btn {
+  width: 100%;
+}
+
+/* ===== Light / Dark mode ===== */
+html[data-theme="light"] {
+  --bg: #f4f6fb;
+  --bg-soft: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f8fafc;
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #4f46e5;
+  --accent: #0891b2;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --transition: all 0.25s ease;
+}
+
+html[data-theme="light"] .home-header {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme="light"] .hero-bg-glow {
+  background: radial-gradient(closest-side, rgba(99, 102, 241, 0.18), rgba(34, 211, 238, 0.08), transparent);
+}
+
+html[data-theme="light"] .auth-card {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+html[data-theme="light"] .field input,
+html[data-theme="light"] .table-input,
+html[data-theme="light"] .create-project .field input,
+html[data-theme="light"] .admin-create-form .field input,
+html[data-theme="light"] .time-chip,
+html[data-theme="light"] .day-chip,
+html[data-theme="light"] .date-input-inline,
+html[data-theme="light"] .ampm-toggle {
+  background: #fff;
+}
+
+html[data-theme="light"] .sidebar {
+  background: #ffffff;
+}
+
+html[data-theme="light"] .admin-header {
+  background: #ffffff;
+}
+
+html[data-theme="light"] .home-footer {
+  background: #ffffff;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary-light);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+@media (max-width: 640px) {
+  .time-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .field-full {
+    grid-column: span 1;
+  }
+}
