@@ -32,7 +32,9 @@ function GoogleSuccess() {
     <div className="auth-page">
       <div className="auth-left">
         <div className="brand">
-          <div className="brand-logo">L</div>
+          <div className="brand-logo">
+            <img src="/favicon.svg" alt="LaunchPad logo" className="brand-logo-img" />
+          </div>
           <span className="brand-name">LaunchPad</span>
         </div>
         <h1>

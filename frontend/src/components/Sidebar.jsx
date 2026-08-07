@@ -58,7 +58,9 @@ try {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="brand-logo">L</div>
+        <div className="brand-logo">
+          <img src="/favicon.svg" alt="LaunchPad logo" className="brand-logo-img" />
+        </div>
         <span className="brand-name">LaunchPad</span>
       </div>
 
