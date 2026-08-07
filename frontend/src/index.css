@@ -2033,6 +2033,9 @@ tbody tr:hover {
   .home-actions .btn-outline-light {
     display: none;
   }
+  .home-actions .home-login-btn {
+    display: none;
+  }
   .comparison-grid {
     grid-template-columns: 1fr;
   }
