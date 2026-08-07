@@ -153,7 +153,7 @@ try {
       <header className="admin-header">
         <div className="admin-brand">
           <div className="brand-logo">
-            <img src="/favicon.svg" alt="LaunchPad logo" className="brand-logo-img" />
+            <img src="/LP1.png" alt="LaunchPad logo" className="brand-logo-img" />
           </div>
           <span className="brand-name">LaunchPad Admin</span>
         </div>
