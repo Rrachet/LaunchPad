@@ -153,7 +153,7 @@ try {
       <header className="admin-header">
         <div className="admin-brand">
           <div className="brand-logo">L</div>
-          <span className="brand-name">LaunchBoard Admin</span>
+          <span className="brand-name">LaunchPad Admin</span>
         </div>
         <div className="admin-header-right">
           <span className="admin-badge">ADMIN</span>

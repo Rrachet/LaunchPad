@@ -80,7 +80,7 @@ const registerUser = async (req, res) => {
       },
     });
 
-    const subject = "Verify your LaunchBoard email";
+    const subject = "Verify your LaunchPad email";
     const text = `Your OTP is: ${otp}. It expires in 10 minutes.`;
     const html = `<p>Your OTP is: <b>${otp}</b>. It expires in 10 minutes.</p>`;
 
@@ -430,7 +430,7 @@ const emailOtpStart = async (req, res) => {
       }
     });
 
-    const subject = "Your LaunchBoard email verification OTP";
+    const subject = "Your LaunchPad email verification OTP";
     await sendOtpEmail({
       to: email,
       subject,

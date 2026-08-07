@@ -33,7 +33,7 @@ function GoogleSuccess() {
       <div className="auth-left">
         <div className="brand">
           <div className="brand-logo">L</div>
-          <span className="brand-name">LaunchBoard</span>
+          <span className="brand-name">LaunchPad</span>
         </div>
         <h1>
           Almost there!

@@ -9,7 +9,7 @@ export function Overview() {
     >
       <div className="section-card">
         <p>
-          Welcome to your LaunchBoard overview. Here you&#39;ll see a summary of your
+          Welcome to your LaunchPad overview. Here you&#39;ll see a summary of your
           KPIs, recent activity, and revenue trends across your organization.
         </p>
       </div>

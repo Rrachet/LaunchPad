@@ -1,4 +1,4 @@
-# LaunchBoard - Auth Flow Implementation Checklist
+# LaunchPad - Auth Flow Implementation Checklist
 
 - [ ] Decide whether Google uses Passport sessions or direct OAuth flow.
 - [ ] Implement endpoints:

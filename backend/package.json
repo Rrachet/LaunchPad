@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "LaunchBoard API",
+  "description": "LaunchPad API",
   "main": "server.js",
   "scripts": {
 "dev":"nodemon server.js",

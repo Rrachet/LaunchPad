@@ -36,29 +36,29 @@ function RevenueChart() {
               <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#263044" strokeDasharray="3 3" vertical={false} />
+<CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="month"
-            stroke="#64748b"
-            tick={{ fill: "#64748b", fontSize: 12 }}
-            axisLine={{ stroke: "#263044" }}
+            stroke="var(--text-dim)"
+            tick={{ fill: "var(--text-dim)", fontSize: 12 }}
+            axisLine={{ stroke: "var(--border)" }}
             tickLine={false}
           />
           <YAxis
-            stroke="#64748b"
-            tick={{ fill: "#64748b", fontSize: 12 }}
+            stroke="var(--text-dim)"
+            tick={{ fill: "var(--text-dim)", fontSize: 12 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `$${v / 1000}k`}
           />
           <Tooltip
             contentStyle={{
-              background: "#1b2436",
-              border: "1px solid #334155",
+              background: "var(--card-hover)",
+              border: "1px solid var(--border-light)",
               borderRadius: 10,
-              color: "#e6edf7",
+              color: "var(--text)",
             }}
-            labelStyle={{ color: "#94a3b8" }}
+            labelStyle={{ color: "var(--text-muted)" }}
             formatter={(value) => [`$${value.toLocaleString()}`, "Revenue"]}
           />
           <Area
@@ -70,10 +70,10 @@ function RevenueChart() {
           <Line
             type="monotone"
             dataKey="revenue"
-            stroke="#6366f1"
+            stroke="var(--blue)"
             strokeWidth={3}
-            dot={{ r: 4, fill: "#6366f1", strokeWidth: 2, stroke: "#161e2e" }}
-            activeDot={{ r: 6, fill: "#22d3ee" }}
+            dot={{ r: 4, fill: "var(--blue)", strokeWidth: 2, stroke: "var(--card)" }}
+            activeDot={{ r: 6, fill: "var(--accent)" }}
           />
         </ComposedChart>
       </ResponsiveContainer>

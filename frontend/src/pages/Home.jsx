@@ -325,6 +325,7 @@ function Home() {
       ? document.documentElement.getAttribute("data-theme") || "dark"
       : "dark"
   );
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -337,33 +338,61 @@ function Home() {
     }
   };
 
+  const goTo = (hash) => {
+    setMenuOpen(false);
+    const el = document.querySelector(hash);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="home-page">
       {/* ===== Header ===== */}
       <header className="home-header">
         <div className="home-header-inner">
-<Link to="/" className="home-logo">
+          <Link to="/" className="home-logo">
             <img src="/LP1.png" alt="LaunchPad logo" className="home-logo-img" />
           </Link>
 
           <nav className="home-nav">
-            <a href="#why">Why LaunchPad</a>
-            <a href="#founder">Founder</a>
-            <a href="#book-demo">Pricing</a>
+            <a href="#why" onClick={(e) => { e.preventDefault(); goTo("#why"); }}>Why LaunchPad</a>
+            <a href="#founder" onClick={(e) => { e.preventDefault(); goTo("#founder"); }}>Founder</a>
+            <a href="#book-demo" className="nav-demo-cta" onClick={(e) => { e.preventDefault(); goTo("#book-demo"); }}>Book a demo</a>
           </nav>
 
           <div className="home-actions">
             <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
               <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
             </button>
-            <Link to="/register" className="btn btn-outline-light">
-              Sign up
-            </Link>
-            <Link to="/login" className="btn btn-primary">
+            <Link to="/login" className="btn btn-primary home-login-btn">
               Login
             </Link>
+            <button
+              className="menu-burger"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <Icon name="close" size={22} /> : <Icon name="menu" size={22} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="home-mobile-menu">
+            <a href="#why" onClick={(e) => { e.preventDefault(); goTo("#why"); }}>Why LaunchPad</a>
+            <a href="#founder" onClick={(e) => { e.preventDefault(); goTo("#founder"); }}>Founder</a>
+            <a href="#book-demo" onClick={(e) => { e.preventDefault(); goTo("#book-demo"); }}>Book a demo</a>
+            <div className="mobile-menu-actions">
+              <Link to="/register" className="btn btn-outline-light" onClick={() => setMenuOpen(false)}>
+                Sign up
+              </Link>
+              <Link to="/login" className="btn btn-primary" onClick={() => setMenuOpen(false)}>
+                Login
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ===== Section 1: Hero ===== */}

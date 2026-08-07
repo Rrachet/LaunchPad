@@ -89,7 +89,7 @@ alert("Email verified! You can now log in.");
       <div className="auth-left">
         <div className="brand">
           <div className="brand-logo">L</div>
-          <span className="brand-name">LaunchBoard</span>
+          <span className="brand-name">LaunchPad</span>
         </div>
 
         <h1>
@@ -123,7 +123,7 @@ alert("Email verified! You can now log in.");
           {stage === "account" ? (
             <>
               <h2>Create account</h2>
-              <p className="auth-sub">Get started with LaunchBoard</p>
+              <p className="auth-sub">Get started with LaunchPad</p>
 
               {error && <div className="error-box">{error}</div>}
 

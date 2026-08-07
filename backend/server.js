@@ -41,7 +41,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api", dashboardRoutes);
 // Test Route
 app.get("/", (req, res) => {
-  res.send("LaunchBoard API Running");
+  res.send("LaunchPad API Running");
 });
 
 // Port (only start listening when run directly, not when imported by Vercel serverless)
