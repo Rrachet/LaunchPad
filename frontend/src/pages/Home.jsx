@@ -377,12 +377,20 @@ function Home() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile / tablet menu */}
         {menuOpen && (
           <div className="home-mobile-menu">
             <a href="#why" onClick={(e) => { e.preventDefault(); goTo("#why"); }}>Why LaunchPad</a>
             <a href="#founder" onClick={(e) => { e.preventDefault(); goTo("#founder"); }}>Founder</a>
             <a href="#book-demo" onClick={(e) => { e.preventDefault(); goTo("#book-demo"); }}>Book a demo</a>
+            <button
+              type="button"
+              className="mobile-theme-toggle"
+              onClick={() => { toggleTheme(); setMenuOpen(false); }}
+            >
+              <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
+              Switch to {theme === "dark" ? "Light" : "Dark"} mode
+            </button>
             <div className="mobile-menu-actions">
               <Link to="/register" className="btn btn-outline-light" onClick={() => setMenuOpen(false)}>
                 Sign up

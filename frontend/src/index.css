@@ -2008,6 +2008,12 @@ tbody tr:hover {
   }
 }
 
+@media (max-width: 900px) {
+  .home-actions .theme-toggle {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .section-container {
     padding: 0 18px;
@@ -2024,13 +2030,7 @@ tbody tr:hover {
   .home-actions {
     gap: 8px;
   }
-  .home-login-btn {
-    display: none;
-  }
   .home-actions .btn-outline-light {
-    display: none;
-  }
-  .home-actions .theme-toggle {
     display: none;
   }
   .comparison-grid {
@@ -2117,6 +2117,27 @@ tbody tr:hover {
 .home-mobile-menu a:hover {
   background: rgba(99, 102, 241, 0.08);
   color: var(--primary-light);
+}
+
+.mobile-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.mobile-theme-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary-light);
+  background: rgba(99, 102, 241, 0.08);
 }
 
 .mobile-menu-actions {
