@@ -15,6 +15,6 @@ Fix favicon not showing properly (shows "L" in browser tab), replace the "L" tex
   - Sidebar.jsx
   - Admin.jsx
 - [x] Sync `live.html` favicon link with `type` attribute
-- [ ] Build & verify (`npm run build` / `npm run dev`)
-- [ ] Commit & push changes
+- [x] Build & verify (`npm run build` / `npm run dev`) — build succeeded
+- [x] Commit & push changes — `f87f5f8` pushed to `origin/master`
 
