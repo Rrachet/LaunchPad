@@ -23,7 +23,10 @@ const handleGoogleLogin = () => {
     // VITE_API_URL may include a trailing "/api", so strip it to get the host.
     const raw = import.meta.env.VITE_API_URL || "https://launchpad-backend-zeta.vercel.app/api";
     const base = raw.replace(/\/api\/?$/, "");
-    window.location.href = `${base}/api/auth/google`;
+    // Pass the frontend origin so the backend can redirect back here after
+    // Google auth completes (works on any domain, including localhost).
+    const returnUrl = encodeURIComponent(window.location.origin);
+    window.location.href = `${base}/api/auth/google?return_url=${returnUrl}`;
   };
 
   const handleLogin = async (e) => {
