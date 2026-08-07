@@ -16,5 +16,9 @@ Fix favicon not showing properly (shows "L" in browser tab), replace the "L" tex
   - Removed the unused `frontend/public/favicon.svg`
 - [x] Build & verify (`npm run build`) — build succeeded
 - [x] Commit & push changes to `origin/master`
+- [x] **Header responsive fix: always show Login button; move nav links + theme toggle into burger menu on tablet/mobile (≤900px)**
+  - `Home.jsx`: added theme-mode toggle inside the mobile menu; kept Login button in header
+  - `index.css`: hide the inline `.theme-toggle` on ≤900px, style `.mobile-theme-toggle`, keep Login button visible (removed old `display:none`)
+  - Build succeeded; committed & pushed `74b8e3e` to `origin/master`
 
 
