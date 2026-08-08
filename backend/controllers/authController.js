@@ -7,6 +7,15 @@ const { sendOtpEmail } = require("../services/emailService");
 
 const OTP_DEV_MODE = process.env.OTP_DEV_MODE === "true";
 
+// Seeded test accounts. Their GMail inboxes are not active, so they must NOT
+// be asked for a login OTP — they sign in directly with email + password.
+const NO_OTP_ACCOUNTS = new Set(
+  (process.env.NO_OTP_EMAILS || "amar@admin.com,amar@client.com")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+);
+
 // GET CURRENT USER (authenticated)
 // Expects: Authorization: Bearer <token>
 const getMe = async (req, res) => {
@@ -127,9 +136,35 @@ const loginOtpStart = async (req, res) => {
         .json({ message: "Account not verified. Please complete signup verification." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // Seeded test accounts have inactive GMail inboxes, so skip the login OTP
+    // and issue the real JWT directly (email + password is enough).
+    if (NO_OTP_ACCOUNTS.has(email.toLowerCase())) {
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+      try {
+        await prisma.userLogin.create({
+          data: { userId: user.id, email: user.email, action: "login" },
+        });
+      } catch (e) {
+        console.error("[auth] Failed to record login activity:", e.message);
+      }
+
+      return res.status(200).json({
+        message: "Login successful",
+        token,
+        role: user.role,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     }
 
     // Credentials are valid — now send an OTP to the user's email for 2FA.

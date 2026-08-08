@@ -38,9 +38,20 @@ const handleGoogleLogin = () => {
       return;
     }
 
-    setLoading(true);
+setLoading(true);
     try {
       const res = await API.post("/auth/login-otp/start", { email, password });
+      // Test accounts (amar@admin.com, amar@client.com) skip OTP and get a
+      // real token directly — sign them straight in.
+      if (res.data?.token) {
+        localStorage.setItem("token", res.data.token);
+        if (res.data?.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
+        return;
+      }
       setPendingToken(res.data.pendingToken);
       if (res.data?.devOtp) setDevOtp(res.data.devOtp);
       setOtp("");
