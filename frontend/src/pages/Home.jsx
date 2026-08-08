@@ -52,6 +52,23 @@ const STATS = [
   { value: "1", label: "Dashboard for everything" },
 ];
 
+const TESTIMONIALS = [
+  {
+    name: "Ankita Mishra",
+    role: "Manages her team's content and projects",
+    initials: "AM",
+    quote:
+      "LaunchPad completely changed how I run content and projects for my team. I can see everything in one place — planning, deadlines, and live progress — without chasing anyone for updates.",
+  },
+  {
+    name: "Pragya Mishra",
+    role: "Woodrock Infotech Pvt Ltd — manages team, projects, KPIs & finance",
+    initials: "PM",
+    quote:
+      "Running my company's projects, KPIs, and finance on this launchpad has been a game-changer. Real-time visibility means I finally make decisions on live data instead of stale spreadsheets.",
+  },
+];
+
 // Build Google Calendar dates param from a Date (YYYYMMDDTHHMM00).
 const fmtDateParam = (d) => {
   const pad = (n) => String(n).padStart(2, "0");
@@ -327,6 +344,28 @@ function Home() {
   );
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Scroll-reveal animation: adds .visible to .reveal elements as they enter the viewport.
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("visible"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -403,21 +442,21 @@ function Home() {
         )}
       </header>
 
-      {/* ===== Section 1: Hero ===== */}
+{/* ===== Section 1: Hero ===== */}
       <section className="hero">
         <div className="hero-bg-glow" />
         <div className="section-container hero-inner">
-          <span className="eyebrow">Meet LaunchPad</span>
-          <h1>
+          <span className="eyebrow reveal">Meet LaunchPad</span>
+          <h1 className="reveal">
             Launch your business with
             <br />
             <span className="gradient"> everything in one dashboard.</span>
           </h1>
-          <p className="hero-sub">
+          <p className="hero-sub reveal">
             LaunchPad brings your projects, analytics, finances, tasks, and team workflows together
             in one intelligent, real-time workspace. No more scattered tools — just clarity.
           </p>
-          <div className="hero-cta">
+          <div className="hero-cta reveal">
             <Link to="/register" className="btn btn-primary btn-lg">
               Get started free
             </Link>
@@ -428,7 +467,7 @@ function Home() {
 
           <div className="hero-stats">
             {STATS.map((s) => (
-              <div className="hero-stat" key={s.label}>
+              <div className="hero-stat reveal" key={s.label}>
                 <div className="hero-stat-value">{s.value}</div>
                 <div className="hero-stat-label">{s.label}</div>
               </div>
@@ -440,7 +479,7 @@ function Home() {
       {/* ===== Section 2: Why LaunchPad ===== */}
       <section id="why" className="why-section">
         <div className="section-container">
-          <div className="section-head">
+          <div className="section-head reveal">
             <span className="eyebrow">Why LaunchPad</span>
             <h2>The difference is in the data</h2>
             <p className="section-sub">
@@ -451,7 +490,7 @@ function Home() {
 
           <div className="comparison-grid">
             {COMPARISON.map((c) => (
-              <div className="comparison-card" key={c.metric}>
+              <div className="comparison-card reveal" key={c.metric}>
                 <div className="comparison-icon">
                   <Icon name={c.icon} size={22} />
                 </div>
@@ -473,10 +512,10 @@ function Home() {
       {/* ===== Section 3: Founder ===== */}
       <section id="founder" className="founder-section">
         <div className="section-container founder-inner">
-          <div className="founder-avatar">
+          <div className="founder-avatar reveal">
             <img src="/LP1.png" alt="Amarnath Mishra" />
           </div>
-          <div className="founder-text">
+          <div className="founder-text reveal">
             <span className="eyebrow">Meet the Founder</span>
             <h2>Amarnath Mishra</h2>
             <p>
@@ -488,6 +527,37 @@ function Home() {
               When he's not shipping new features, Amarnath is focused on making LaunchPad the
               launchpad your business deserves to grow from.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Section 3.5: Testimonials ===== */}
+      <section id="testimonials" className="testimonials-section">
+        <div className="section-container">
+          <div className="section-head reveal">
+            <span className="eyebrow">Wall of Love</span>
+            <h2>Trusted by teams that ship</h2>
+            <p className="section-sub">
+              Real people running real projects, KPIs, and finance on LaunchPad every single day.
+            </p>
+          </div>
+
+          <div className="testimonials-grid">
+            {TESTIMONIALS.map((t) => (
+              <div className="testimonial-card reveal" key={t.name}>
+                <div className="testimonial-stars" aria-label="5 out of 5 stars">
+                  ★★★★★
+                </div>
+                <p className="testimonial-quote">"{t.quote}"</p>
+                <div className="testimonial-author">
+                  <div className="testimonial-avatar">{t.initials}</div>
+                  <div>
+                    <div className="tm-name">{t.name}</div>
+                    <div className="tm-role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

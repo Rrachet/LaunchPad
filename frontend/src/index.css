@@ -268,6 +268,7 @@ select {
 }
 
 .btn {
+  position: relative;
   padding: 13px 18px;
   border-radius: 11px;
   border: none;
@@ -278,23 +279,55 @@ select {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   color: #fff;
-  width: 100%;
+  width: auto;
   box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
 }
 
+/* Shine sweep effect on primary buttons */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.6s ease;
+}
+
+.btn-primary:hover:not(:disabled)::after {
+  left: 120%;
+}
+
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Full-width buttons only where explicitly needed (auth/modals) */
+.auth-card .btn-primary,
+.modal-card .btn-primary,
+.mobile-menu-actions .btn {
+  width: 100%;
 }
 
 .spinner {
@@ -1928,6 +1961,154 @@ tbody tr:hover {
   width: auto;
 }
 
+/* ===== Testimonials ===== */
+.testimonials-section {
+  padding: 90px 0;
+  background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.05), transparent);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.testimonial-card::before {
+  content: "\201C";
+  position: absolute;
+  top: 6px;
+  right: 20px;
+  font-size: 90px;
+  font-family: Georgia, serif;
+  line-height: 1;
+  color: rgba(99, 102, 241, 0.18);
+  pointer-events: none;
+}
+
+.testimonial-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+}
+
+.testimonial-card .testimonial-stars {
+  color: var(--warning);
+  font-size: 16px;
+  letter-spacing: 3px;
+  margin-bottom: 14px;
+}
+
+.testimonial-card .testimonial-quote {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.testimonial-author .tm-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.testimonial-author .tm-role {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ===== Scroll reveal animations ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Hero stat hover ===== */
+.hero-stat {
+  transition: var(--transition);
+}
+.hero-stat:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== Comparison card hover polish ===== */
+.comparison-card,
+.testimonial-card {
+  position: relative;
+}
+
+.comparison-card::after,
+.testimonial-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.comparison-card:hover::after,
+.testimonial-card:hover::after {
+  opacity: 1;
+}
+
+/* ===== Founder avatar hover ===== */
+.founder-avatar {
+  transition: var(--transition);
+}
+.founder-avatar:hover {
+  transform: scale(1.03);
+  box-shadow: 0 14px 40px rgba(99, 102, 241, 0.35);
+}
+
 /* Footer */
 .home-footer {
   border-top: 1px solid var(--border);
@@ -1997,20 +2178,24 @@ tbody tr:hover {
   .hero-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
   .home-nav {
     display: none;
   }
-  .menu-burger {
-    display: inline-flex;
-  }
-}
-
-@media (max-width: 900px) {
   .home-actions .theme-toggle {
     display: none;
+  }
+  .menu-burger {
+    display: inline-flex !important;
+  }
+  .home-mobile-menu {
+    display: flex !important;
+    animation: slideDown 0.3s ease;
   }
 }
 
@@ -2160,9 +2345,14 @@ tbody tr:hover {
   color: var(--primary-light);
 }
 
-@media (max-width: 900px) {
-  .home-mobile-menu {
-    display: flex;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
