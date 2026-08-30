@@ -1,20 +1,48 @@
-# LaunchPad — Full-Stack Application Platform
+# LaunchPad
 
-> **A full-stack application demonstrating APIs, authentication, relational data, configuration and deployment-oriented engineering.**
+### Full-stack product platform — requirements to working system
 
-LaunchPad is the engineering-depth project in my IBM-focused portfolio. It demonstrates the application layer underneath support and operations work: a request travels from **React → REST API → business logic → PostgreSQL**.
+LaunchPad is the technical-depth project in my product portfolio. It demonstrates how a product idea becomes a working system across **user requirements, workflows, APIs, business logic, data and deployment**.
 
-## Why it matters for application support
+---
 
-A support engineer needs to understand what an application is made of before diagnosing a problem. LaunchPad provides that foundation:
+## Product lens
 
-- REST API design and integration
-- Layered Express architecture
-- PostgreSQL relational data modelling
-- Authentication and authorization flows
-- Environment-based configuration
-- External service integration
-- Separate frontend/backend deployment concerns
+A product manager does not need to implement every line of code, but should understand the system deeply enough to make good trade-offs with engineering.
+
+LaunchPad is designed to show that technical fluency.
+
+```text
+USER NEED
+   ↓
+REQUIREMENT
+   ↓
+USER FLOW
+   ↓
+API CONTRACT
+   ↓
+BUSINESS LOGIC
+   ↓
+DATA MODEL
+   ↓
+IMPLEMENTATION
+   ↓
+VALIDATION
+```
+
+## Product questions
+
+When shaping this type of system, I focus on:
+
+- What is the user's primary job-to-be-done?
+- What is the smallest useful workflow?
+- Which state transitions matter?
+- What should happen when an external dependency fails?
+- Which data needs to be durable?
+- Where should authentication and authorization live?
+- What should be measured after launch?
+
+---
 
 ## Architecture
 
@@ -34,56 +62,60 @@ users · auth · projects · activity
 
 External integrations include Google OAuth and transactional email.
 
-## Operational scenarios
+---
 
-The application provides useful scenarios for support-oriented investigation:
+## Product + engineering trade-offs
 
-- Authentication failures
-- OAuth configuration problems
-- Database connectivity issues
-- Invalid environment configuration
-- API request failures
-- External service failures
-- Frontend/backend integration problems
+### Layered architecture
 
-The troubleshooting principle is:
+Separating routes, controllers, services and data access makes the system easier to reason about and change as requirements evolve.
+
+### Authentication as product infrastructure
+
+Login, OAuth, sessions and authorization are not merely technical details: they directly affect activation, trust and support burden.
+
+### Configuration boundaries
+
+Environment-specific configuration is kept outside source code so deployment changes do not require product code changes.
+
+### Failure paths are part of the UX
+
+The application considers authentication failures, API failures, database connectivity problems, external-service failures and configuration issues as product scenarios rather than afterthoughts.
+
+---
+
+## Metrics I would instrument
+
+| Funnel stage | Example metric |
+|---|---|
+| Acquisition | Landing → signup rate |
+| Activation | Signup → first successful workflow |
+| Engagement | Weekly active users / completed workflows |
+| Reliability | API error rate / availability |
+| Retention | Returning users completing a workflow |
+| Support | Failure-to-resolution time |
+
+These are **proposed metrics**, not claims about production performance.
+
+---
+
+## Validation
 
 ```text
-User symptom
-    ↓
-Reproduce
-    ↓
-Identify affected layer
-    ↓
-Check configuration / logs / dependency
-    ↓
-Apply safe remediation
-    ↓
-Validate
-    ↓
-Document / escalate
+install
+  ↓
+lint
+  ↓
+frontend build
+  ↓
+backend startup / API checks
+  ↓
+authentication-flow verification
 ```
 
-## Repository structure
+Automated backend coverage remains a future improvement and is not presented as completed functionality.
 
-```text
-backend/
-├── controllers/
-├── middleware/
-├── prisma/
-├── routes/
-├── services/
-└── utils/
-
-frontend/
-├── src/
-└── public/
-
-.env.example
-render.yaml
-vercel.json
-package.json
-```
+---
 
 ## Run locally
 
@@ -107,36 +139,23 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-## Validation
+---
 
-```text
-install
-  ↓
-lint
-  ↓
-frontend build
-  ↓
-backend startup / API checks
-  ↓
-authentication-flow verification
-```
+## Technical stack
 
-Automated backend coverage remains a future improvement and is not presented as completed functionality.
+**Frontend:** React + Vite  
+**Backend:** Node.js + Express  
+**Data:** PostgreSQL + Prisma  
+**Auth:** JWT + Google OAuth  
+**Delivery:** environment-based configuration + deployment manifests
 
-## Security
+---
 
-- Secrets stay in environment variables.
-- OAuth/database credentials must never be committed.
-- Production configuration belongs in the deployment environment.
-- Authentication changes should be validated across frontend and backend.
+## Why this belongs in a PM portfolio
 
-See [`SECURITY.md`](SECURITY.md).
+LaunchPad is evidence of **technical product judgment**: I can translate product requirements into system behaviour, understand engineering constraints, reason about failure states and discuss trade-offs with developers.
 
-## Portfolio role
-
-**ENGINEER — application architecture and troubleshooting depth**
-
-LaunchPad complements [ThriiLocal](https://github.com/Rrachet/ThriiLocal), [SupportHub](https://github.com/Rrachet/SupportHub) and [APIAtlas](https://github.com/Rrachet/apiatlas): build the application, understand its dependencies, monitor it, support users and investigate failures.
+**Product requirement → technical architecture → implementation → validation → measurement.**
 
 ## License
 
